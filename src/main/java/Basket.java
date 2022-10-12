@@ -1,8 +1,10 @@
-package product_basket;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -131,5 +133,37 @@ public class Basket implements Serializable {
             basket.printCart();
             return basket;
         }
+    }
+
+    public void saveJson(File jsonFile) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode jsonNode = objectMapper.createObjectNode();
+        jsonNode.put("productName", Arrays.toString(productsNames));
+        jsonNode.put("productCount", Arrays.toString(productsCount));
+        jsonNode.put("productPrice", Arrays.toString(prices));
+        System.out.print(jsonNode);
+        try (FileWriter file = new FileWriter(jsonFile)) {
+            file.write(String.valueOf(jsonNode));
+            file.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Basket loadFromJsonFile(File jsonFile) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Basket basket = objectMapper.readValue(jsonFile,Basket.class);
+        System.out.print("Корзина восстановлена!:" + "\n");
+        basket.printCart();
+        return basket;
+    }
+
+    @Override
+    public String toString() {
+        return "Basket{" +
+               "productsNames:[" + Arrays.toString(productsNames) +
+               "] , productsCount:[" + Arrays.toString(productsCount) +
+               "] , prices:[" + Arrays.toString(prices) +
+               "]}";
     }
 }

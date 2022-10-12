@@ -1,4 +1,4 @@
-package product_basket;
+import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,17 +12,19 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, ParseException {
         int[] prices = {35, 87, 109};
         String[] products = {"Хлеб", "Молоко", "Яблоки"};
 
         Scanner scanner = new Scanner(System.in);
-        File binFile = new File("basket.bin");
+        ClientLog clientLog = new ClientLog();
+        File csvFile = new File("log.csv");
+        File jsonFile = new File("basket.json");
         Basket basket = new Basket(prices, products);
 
-        if (binFile.exists()) {
-            basket = Basket.loadFromBinFile(binFile);
-        }
+       if (jsonFile.exists()) {
+           basket = Basket.loadFromJsonFile(jsonFile);
+       }
         basket.printListAllProductsForBuy();
 
         while (true) {
@@ -38,7 +40,7 @@ public class Main {
 
             int productNumber;
             try {
-                productNumber = Integer.parseInt(parts[0]) - 1; // выбор продукта
+                productNumber = Integer.parseInt(parts[0])-1; // выбор продукта
             } catch (NumberFormatException e) {
                 System.out.println("Вы ввели текст заместо числа. Попробуйте снова!");
                 continue;
@@ -59,9 +61,11 @@ public class Main {
                 System.out.println("Вы ввели некорректное кол-во продукта. Попробуйте снова!");
                 continue;
             }
-            basket.addToCart(productNumber, productCount);
+            basket.addToCart(productNumber,productCount);
+           clientLog.log(productNumber+1,productCount);
         }
-        basket.saveBin(binFile);
+        clientLog.exportAsCSV(csvFile);
+        basket.saveJson(jsonFile);
         basket.printCart();
     }
 }
