@@ -162,13 +162,11 @@ public class Basket implements Serializable {
      * Сохраняет объект корзины в формат JSON.
      *
      * @param jsonFile файл формата JSON.
-     * @param basket
-     * @throws IOException
      */
-    public void saveJson(File jsonFile, Basket basket) {
+    public void saveJson(File jsonFile) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            objectMapper.writeValue(jsonFile, basket);
+            objectMapper.writeValue(jsonFile, this);
         } catch (IOException e) {
             throw new RuntimeException("File not found in there!!!");
         }
@@ -178,7 +176,6 @@ public class Basket implements Serializable {
      * Восстанавливает объект корзины из JSON файла, в который ранее она была сохранена.
      *
      * @param jsonFile файл формата JSON.
-     * @return
      * @throws IOException
      */
     public static Basket loadFromJsonFile(File jsonFile) throws IOException {

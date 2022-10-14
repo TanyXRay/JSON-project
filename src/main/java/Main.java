@@ -64,7 +64,7 @@ public class Main {
             clientLog.log(productNumber + 1, productCount);
         }
         clientLog.exportAsCSV(csvFile);
-        basket.saveJson(jsonFile, basket);
+        basket.saveJson(jsonFile);
         basket.printCart();
     }
 }
