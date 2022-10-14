@@ -1,5 +1,3 @@
-import org.json.simple.parser.ParseException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -8,23 +6,24 @@ import java.util.Scanner;
  * Решение задачи №1 по теме "Одномерные массивы".
  * Решение задачи №1 по теме "Исключения".
  * Решение задачи №2 по теме "Работа с файлами. Потоки ввода-вывода. Сериализация".
+ * Решение задачи №1 по теме "Работа с форматами СSV,JSON,XML.
  */
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException, ParseException {
-        int[] prices = {35, 87, 109};
+    public static void main(String[] args) throws IOException {
         String[] products = {"Хлеб", "Молоко", "Яблоки"};
+        int[] prices = {35, 87, 109};
 
         Scanner scanner = new Scanner(System.in);
         ClientLog clientLog = new ClientLog();
         File csvFile = new File("log.csv");
         File jsonFile = new File("basket.json");
-        Basket basket = new Basket(prices, products);
+        Basket basket = new Basket(products, prices);
 
-       if (jsonFile.exists()) {
-           basket = Basket.loadFromJsonFile(jsonFile);
-       }
+        if (jsonFile.exists()) {
+            basket = Basket.loadFromJsonFile(jsonFile);
+        }
         basket.printListAllProductsForBuy();
 
         while (true) {
@@ -40,7 +39,7 @@ public class Main {
 
             int productNumber;
             try {
-                productNumber = Integer.parseInt(parts[0])-1; // выбор продукта
+                productNumber = Integer.parseInt(parts[0]) - 1; // выбор продукта
             } catch (NumberFormatException e) {
                 System.out.println("Вы ввели текст заместо числа. Попробуйте снова!");
                 continue;
@@ -61,11 +60,11 @@ public class Main {
                 System.out.println("Вы ввели некорректное кол-во продукта. Попробуйте снова!");
                 continue;
             }
-            basket.addToCart(productNumber,productCount);
-           clientLog.log(productNumber+1,productCount);
+            basket.addToCart(productNumber, productCount);
+            clientLog.log(productNumber + 1, productCount);
         }
         clientLog.exportAsCSV(csvFile);
-        basket.saveJson(jsonFile);
+        basket.saveJson(jsonFile, basket);
         basket.printCart();
     }
 }

@@ -1,5 +1,4 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -10,16 +9,40 @@ import java.util.List;
 /**
  * Класс, описывающий покупательскую корзину.
  */
+
 public class Basket implements Serializable {
 
-    private int[] prices;
     private String[] productsNames;
     private int[] productsCount;
+    private int[] prices;
 
-    public Basket(int[] prices, String[] productsNames) {
-        this.prices = prices;
+    public Basket(String[] productsNames, int[] prices) {
         this.productsNames = productsNames;
-        this.productsCount = new int[prices.length];
+        this.prices = prices;
+        this.productsCount = new int[productsNames.length];
+    }
+
+    public Basket() {
+    }
+
+    public String[] getProductsNames() {
+        return productsNames;
+    }
+
+    public void setProductsNames(String[] productsNames) {
+        this.productsNames = productsNames;
+    }
+
+    public int[] getProductsCount() {
+        return productsCount;
+    }
+
+    public int[] getPrices() {
+        return prices;
+    }
+
+    public void setPrices(int[] prices) {
+        this.prices = prices;
     }
 
     public void setProductsCount(int[] productsCount) {
@@ -101,7 +124,7 @@ public class Basket implements Serializable {
             productsCount[pos] = Integer.parseInt(data[2]);
         }
 
-        Basket basket = new Basket(prices, productsNames);
+        Basket basket = new Basket(productsNames, prices);
         basket.setProductsCount(productsCount);
         System.out.print("Корзина восстановлена!:" + "\n");
         basket.printCart();
@@ -135,24 +158,32 @@ public class Basket implements Serializable {
         }
     }
 
-    public void saveJson(File jsonFile) {
+    /**
+     * Сохраняет объект корзины в формат JSON.
+     *
+     * @param jsonFile файл формата JSON.
+     * @param basket
+     * @throws IOException
+     */
+    public void saveJson(File jsonFile, Basket basket) {
         ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode jsonNode = objectMapper.createObjectNode();
-        jsonNode.put("productName", Arrays.toString(productsNames));
-        jsonNode.put("productCount", Arrays.toString(productsCount));
-        jsonNode.put("productPrice", Arrays.toString(prices));
-        System.out.print(jsonNode);
-        try (FileWriter file = new FileWriter(jsonFile)) {
-            file.write(String.valueOf(jsonNode));
-            file.flush();
+        try {
+            objectMapper.writeValue(jsonFile, basket);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("File not found in there!!!");
         }
     }
 
+    /**
+     * Восстанавливает объект корзины из JSON файла, в который ранее она была сохранена.
+     *
+     * @param jsonFile файл формата JSON.
+     * @return
+     * @throws IOException
+     */
     public static Basket loadFromJsonFile(File jsonFile) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        Basket basket = objectMapper.readValue(jsonFile,Basket.class);
+        Basket basket = objectMapper.readValue(jsonFile, Basket.class);
         System.out.print("Корзина восстановлена!:" + "\n");
         basket.printCart();
         return basket;
@@ -161,9 +192,9 @@ public class Basket implements Serializable {
     @Override
     public String toString() {
         return "Basket{" +
-               "productsNames:[" + Arrays.toString(productsNames) +
-               "] , productsCount:[" + Arrays.toString(productsCount) +
-               "] , prices:[" + Arrays.toString(prices) +
-               "]}";
+               "productsNames=" + Arrays.toString(productsNames) +
+               ", productsCount=" + Arrays.toString(productsCount) +
+               ", prices=" + Arrays.toString(prices) +
+               '}';
     }
 }
