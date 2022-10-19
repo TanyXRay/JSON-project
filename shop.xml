@@ -2,13 +2,13 @@
 <config>
     <load>
         <enabled>true</enabled>
-        <fileName>basket.json</fileName>
+        <fileName>basket</fileName>
         <format>json</format>
     </load>
 
     <save>
         <enabled>true</enabled>
-        <fileName>basket.json</fileName>
+        <fileName>basket</fileName>
         <format>json</format>
     </save>
 
